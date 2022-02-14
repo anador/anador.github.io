@@ -1,0 +1,292 @@
+{
+    "main": [
+        {
+            "title": "Основное",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462810135"
+        }
+    ],
+    "featureFlags": [
+        {
+            "title": "Фича-флаги",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462810142/-"
+        }
+    ],
+    "users": [
+        {
+            "title": "Пользователи (SA)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444951563/SA"
+        }
+    ],
+    "roles": [
+        {
+            "title": "Роли компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444034074"
+        },
+        {
+            "title": "[в работе] Политики ролей",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2443182098"
+        }
+    ],
+    "directions": [
+        {
+            "title": "Воронки",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462285859"
+        },
+        {
+            "title": "Направления (direction_code)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/FEAT/pages/2021195796/direction+code"
+        }
+    ],
+    "merge": [
+        {
+            "title": "Мерж типов этапов",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462318612"
+        }
+    ],
+    "forms": [
+        {
+            "title": "Формы компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462056468"
+        },
+        {
+            "title": "Визуальный конструктор",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2459238413"
+        },
+        {
+            "title": "Целевой объект",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2459041797"
+        },
+        {
+            "title": "Динамические формы",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2459074572"
+        },
+        {
+            "title": "Условия (матчеры)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2459303941"
+        },
+        {
+            "title": "Дефолтные формы",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2459336719"
+        },
+        {
+            "title": "Копирование форм",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2460221466"
+        },
+        {
+            "title": "Статические поля",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2458943517"
+        },
+        {
+            "title": "Динамические поля",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2474803209"
+        },
+        {
+            "title": "Типы динамических полей",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2473099304"
+        }
+    ],
+    "questionnaries": [
+        {
+            "title": "Опросники",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2470772786"
+        }
+    ],
+    "dicts": [
+        {
+            "title": "Словари компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462973963"
+        },
+        {
+            "title": "Словари",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2445049863"
+        }
+    ],
+    "imports": [
+        {
+            "title": "Импорты",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462351385"
+        }
+    ],
+    "email": [
+        {
+            "title": "Тех. учетка",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462646275/"
+        }
+    ],
+    "applicant_card": [
+        {
+            "title": "Страница кандидата",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462154764"
+        }
+    ],
+    "columns": [
+        {
+            "title": "Колонки компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462253095"
+        },
+        {
+            "title": "Колонки",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444197929"
+        }
+    ],
+    "vars": [
+        {
+            "title": "Переменные",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462515221"
+        }
+    ],
+    "notification_groups": [
+        {
+            "title": "Группы уведомлений компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462023703"
+        },
+        {
+            "title": "Группы уведомлений",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444001303"
+        }
+    ],
+    "webhooks": [
+        {
+            "title": "Webhooks",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2461335604/Webhooks"
+        }
+    ],
+    "workflows": [
+        {
+            "title": "Workflows",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462089223/Workflows"
+        }
+    ],
+    "serialization_constructors": [
+        {
+            "title": "Конструкторы сериализации",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462449667"
+        }
+    ],
+    "assignment_settings": [
+        {
+            "title": "Настройки цепочек",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462842900"
+        },
+        {
+            "title": "Цепочки согласования",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/potokmanual/pages/2130116633"
+        }
+    ],
+    "filters": [
+        {
+            "title": "Фильтры",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462580766"
+        }
+    ],
+    "collections": [
+        {
+            "title": "Коллекции",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462810149"
+        }
+    ],
+    "i18n": [
+        {
+            "title": "Переводы компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2452094979"
+        },
+        {
+            "title": "Переводы (общие)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2445115410"
+        },
+        {
+            "title": "Переводы",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2445213712"
+        }
+    ],
+    "map": [
+        {
+            "title": "Брендирование карты",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2461859876"
+        }
+    ],
+    "staff": [
+        {
+            "title": "Настройки штатки",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462777349"
+        }
+    ],
+    "rules": [
+        {
+            "title": "Правила компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2462416930"
+        },
+        {
+            "title": "Правила",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444263444"
+        },
+        {
+            "title": "Отложенные действия",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2457894970"
+        },
+        {
+            "title": "Практические кейсы (отложенных действий)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2457469033"
+        },
+        {
+            "title": "Сущности - События",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2460450817/-"
+        },
+        {
+            "title": "Сущности - Действия",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2461073411/-"
+        }
+    ],
+    "companies": [
+        {
+            "title": "Компании",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444328994"
+        }
+    ],
+    "impersonalization": [
+        {
+            "title": "Стать другим",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2445213705"
+        }
+    ],
+    "generate_password": [
+        {
+            "title": "Хочу пароль",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2443870247"
+        }
+    ],
+    "logs": [
+        {
+            "title": "Технические логи",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2445443073"
+        }
+    ],
+    "popups": [
+        {
+            "title": "Попапы",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444099627"
+        }
+    ],
+    "dump": [
+        {
+            "title": "Добавить в дамп",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444656670"
+        }
+    ],
+    "sites": [
+        {
+            "title": "Настройки сайтов",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2471034933"
+        }
+    ],
+    "members": [
+        {
+            "title": "Настройки (SA)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2444001310/SA"
+        },
+        {
+            "title": "Роли (SA)",
+            "URL": "https://potokk.atlassian.net/wiki/spaces/Potok/pages/2451177475/SA"
+        }
+    ]
+}
