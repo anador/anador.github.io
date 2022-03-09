@@ -1,0 +1,831 @@
+openapi: 3.0.0
+info:
+  title: test api example 123
+  version: v3
+  description: test api description
+servers:
+  - url: 'http://localhost:3000/api/v3/'
+    description: test server
+  - description: dev server
+    url: 'http://localhost:5000/api/v3/'
+paths:
+  /demands:
+    post:
+      summary: Создание потребности
+      tags:
+        - Потребности (demands)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                required:
+                  - status
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: пельмень упал со стола
+                required:
+                  - status
+      operationId: post-demands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Объект
+              x-examples:
+                example-1:
+                  job_id: 0
+                  business_unit_id: 0
+                  quantity: 0
+                  comment: string
+                  sprint_id: 0
+                  customer_id: 0
+                  executive_id: 0
+                  priority_item_id: 0
+                  author_id: 0
+              properties:
+                job_id:
+                  type: integer
+                  example: 123456
+                  description: id вакансии
+                business_unit_id:
+                  type: integer
+                  description: id объекта
+                quantity:
+                  type: integer
+                  description: Количество позиций
+                  example: 5
+                comment:
+                  type: string
+                sprint_id:
+                  type: integer
+                  description: id спринта
+                customer_id:
+                  type: integer
+                  description: id пользователя-заказчика потребности
+                  example: 0
+                executive_id:
+                  type: integer
+                  description: id пользователя-ответственного за потребность
+                priority_item_id:
+                  type: integer
+                  description: id значения приоритета потребности
+                author_id:
+                  type: integer
+                  description: id пользователя-создателя потребности
+              required:
+                - job_id
+                - business_unit_id
+                - quantity
+                - sprint_id
+                - customer_id
+                - executive_id
+                - priority_item_id
+                - author_id
+            examples:
+              example-1:
+                value:
+                  job_id: 0
+                  business_unit_id: 0
+                  quantity: 0
+                  comment: string
+                  sprint_id: 0
+                  customer_id: 0
+                  executive_id: 0
+                  priority_item_id: 0
+                  author_id: 0
+        description: тыц тыц описание
+      description: 'Вот здесь описываем, что делает метод'
+    get:
+      summary: ''
+      operationId: get-demands
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Потребности (demands)
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      - id: 0
+                        first_name: string
+                        last_name: string
+                        middle_name: string
+                        name: string
+                        address: string
+                        email: string
+                        title: string
+                        salary: 0
+                        source_type: string
+                        source_url: string
+                        born: string
+                        skype: string
+                        phones:
+                          - string
+                        accounts:
+                          - url: string
+                            icon_id: string
+                        tags:
+                          - string
+                        created_at: string
+                        updated_at: string
+                        avatar: string
+                        resumes:
+                          - id: 0
+                            cv_original: string
+                            cv_html: string
+                            cv_params:
+                              title: string
+                              education:
+                                level:
+                                  name: string
+                                primary:
+                                  - name: string
+                                    id: string
+                              skill_set:
+                                - string
+                              experience:
+                                - company: string
+                                  start: string
+                                  end: string
+                                  position: string
+                                  description: string
+                        jobs:
+                          - id: 0
+                            name: string
+                            stage_name: string
+                            active: true
+                        source_name: string
+                        another_emails:
+                          - string
+                        states:
+                          - state_id: string
+                            updated_at: string
+                            workflow_name: string
+                            workflow_id: 0
+                            init_by: {}
+                            additional_info:
+                              - string
+                        events:
+                          - id: 0
+                            subject: string
+                            body: string
+                            applicant:
+                              id: 0
+                              first_name: string
+                              last_name: string
+                              middle_name: string
+                            job: string
+                            from: string
+                            to: string
+                            type: string
+                        ajs_joins:
+                          - job:
+                              id: 0
+                              name: string
+                              stage_name: string
+                              active: true
+                            employee_ext_id: 0
+                            stage:
+                              id: 0
+                              name: string
+                              serial: 0
+                              active_applicants: 0
+                              declined_applicants: 0
+                              stage_type: string
+                        dynamic_array_meeting_locations:
+                          - string
+                        dynamic_objects_array_previous_employment:
+                          - employer: string
+                            position: string
+                            period_to: string
+                            to_present: string
+                            period_from: string
+                        dynamic_string_field1: string
+                        dynamic_string_field2: string
+                    per_page: 0
+                    pages: 0
+                    page: 0
+                properties:
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      description: test
+                      properties:
+                        id:
+                          type: number
+                          description: test
+                        first_name:
+                          type: string
+                          minLength: 1
+                        last_name:
+                          type: string
+                          minLength: 1
+                        middle_name:
+                          type: string
+                          minLength: 1
+                        name:
+                          type: string
+                          minLength: 1
+                        address:
+                          type: string
+                          minLength: 1
+                        email:
+                          type: string
+                          minLength: 1
+                        title:
+                          type: string
+                          minLength: 1
+                        salary:
+                          type: number
+                        source_type:
+                          type: string
+                          minLength: 1
+                        source_url:
+                          type: string
+                          minLength: 1
+                        born:
+                          type: string
+                          minLength: 1
+                        skype:
+                          type: string
+                          minLength: 1
+                        phones:
+                          type: array
+                          items:
+                            type: object
+                        accounts:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                minLength: 1
+                              icon_id:
+                                type: string
+                                minLength: 1
+                            required:
+                              - url
+                              - icon_id
+                        tags:
+                          type: array
+                          items:
+                            type: object
+                        created_at:
+                          type: string
+                          minLength: 1
+                        updated_at:
+                          type: string
+                          minLength: 1
+                        avatar:
+                          type: string
+                          minLength: 1
+                        resumes:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: number
+                              cv_original:
+                                type: string
+                                minLength: 1
+                              cv_html:
+                                type: string
+                                minLength: 1
+                              cv_params:
+                                type: object
+                                properties:
+                                  title:
+                                    type: string
+                                    minLength: 1
+                                  education:
+                                    type: object
+                                    required:
+                                      - level
+                                      - primary
+                                    properties:
+                                      level:
+                                        type: object
+                                        required:
+                                          - name
+                                        properties:
+                                          name:
+                                            type: string
+                                            minLength: 1
+                                      primary:
+                                        type: array
+                                        uniqueItems: true
+                                        minItems: 1
+                                        items:
+                                          type: object
+                                          properties:
+                                            name:
+                                              type: string
+                                              minLength: 1
+                                            id:
+                                              type: string
+                                              minLength: 1
+                                          required:
+                                            - name
+                                            - id
+                                  skill_set:
+                                    type: array
+                                    items:
+                                      type: object
+                                  experience:
+                                    type: array
+                                    uniqueItems: true
+                                    minItems: 1
+                                    items:
+                                      type: object
+                                      properties:
+                                        company:
+                                          type: string
+                                          minLength: 1
+                                        start:
+                                          type: string
+                                          minLength: 1
+                                        end:
+                                          type: string
+                                          minLength: 1
+                                        position:
+                                          type: string
+                                          minLength: 1
+                                        description:
+                                          type: string
+                                          minLength: 1
+                                      required:
+                                        - company
+                                        - start
+                                        - end
+                                        - position
+                                        - description
+                                required:
+                                  - title
+                                  - education
+                                  - skill_set
+                                  - experience
+                            required:
+                              - id
+                              - cv_original
+                              - cv_html
+                        jobs:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: number
+                              name:
+                                type: string
+                                minLength: 1
+                              stage_name:
+                                type: string
+                                minLength: 1
+                              active:
+                                type: boolean
+                            required:
+                              - id
+                              - name
+                              - stage_name
+                              - active
+                        source_name:
+                          type: string
+                          minLength: 1
+                        another_emails:
+                          type: array
+                          items:
+                            type: object
+                        states:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              state_id:
+                                type: string
+                                minLength: 1
+                              updated_at:
+                                type: string
+                                minLength: 1
+                              workflow_name:
+                                type: string
+                                minLength: 1
+                              workflow_id:
+                                type: number
+                              init_by:
+                                type: object
+                              additional_info:
+                                type: array
+                                items:
+                                  type: object
+                            required:
+                              - state_id
+                              - updated_at
+                              - workflow_name
+                              - workflow_id
+                        events:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: number
+                              subject:
+                                type: string
+                                minLength: 1
+                              body:
+                                type: string
+                                minLength: 1
+                              applicant:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  first_name:
+                                    type: string
+                                    minLength: 1
+                                  last_name:
+                                    type: string
+                                    minLength: 1
+                                  middle_name:
+                                    type: string
+                                    minLength: 1
+                                required:
+                                  - id
+                                  - first_name
+                                  - last_name
+                                  - middle_name
+                              job:
+                                type: string
+                                minLength: 1
+                              from:
+                                type: string
+                                minLength: 1
+                              to:
+                                type: string
+                                minLength: 1
+                              type:
+                                type: string
+                                minLength: 1
+                            required:
+                              - id
+                              - subject
+                              - body
+                              - job
+                              - from
+                              - to
+                              - type
+                        ajs_joins:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              job:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  name:
+                                    type: string
+                                    minLength: 1
+                                  stage_name:
+                                    type: string
+                                    minLength: 1
+                                  active:
+                                    type: boolean
+                                required:
+                                  - id
+                                  - name
+                                  - stage_name
+                                  - active
+                              employee_ext_id:
+                                type: number
+                              stage:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  name:
+                                    type: string
+                                    minLength: 1
+                                  serial:
+                                    type: number
+                                  active_applicants:
+                                    type: number
+                                  declined_applicants:
+                                    type: number
+                                  stage_type:
+                                    type: string
+                                    minLength: 1
+                                required:
+                                  - id
+                                  - name
+                                  - serial
+                                  - active_applicants
+                                  - declined_applicants
+                                  - stage_type
+                            required:
+                              - employee_ext_id
+                        dynamic_array_meeting_locations:
+                          type: array
+                          items:
+                            type: object
+                        dynamic_objects_array_previous_employment:
+                          type: array
+                          uniqueItems: true
+                          minItems: 1
+                          items:
+                            type: object
+                            properties:
+                              employer:
+                                type: string
+                                minLength: 1
+                              position:
+                                type: string
+                                minLength: 1
+                              period_to:
+                                type: string
+                                minLength: 1
+                              to_present:
+                                type: string
+                                minLength: 1
+                              period_from:
+                                type: string
+                                minLength: 1
+                            required:
+                              - employer
+                              - position
+                              - period_to
+                              - to_present
+                              - period_from
+                        dynamic_string_field1:
+                          type: string
+                          minLength: 1
+                        dynamic_string_field2:
+                          type: string
+                          minLength: 1
+                      required:
+                        - first_name
+                        - last_name
+                        - middle_name
+                        - name
+                        - address
+                        - email
+                        - title
+                        - salary
+                        - source_type
+                        - source_url
+                        - born
+                        - skype
+                        - created_at
+                        - updated_at
+                        - avatar
+                        - source_name
+                        - dynamic_string_field1
+                        - dynamic_string_field2
+                  per_page:
+                    type: number
+                  pages:
+                    type: number
+                  page:
+                    type: number
+                required:
+                  - data
+                  - per_page
+                  - pages
+                  - page
+              examples:
+                Get User Alice Smith:
+                  value:
+                    id: 142
+                    firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+        '404':
+          description: User Not Found
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+    patch:
+      summary: Update User Information
+      operationId: patch-users-userId
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Updated User Rebecca Baker:
+                  value:
+                    id: 13
+                    firstName: Rebecca
+                    lastName: Baker
+                    email: rebecca@gmail.com
+                    dateOfBirth: '1985-10-02'
+                    emailVerified: false
+                    createDate: '2019-08-24'
+        '404':
+          description: User Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the information of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  description: 'If a new email is given, the user''s email verified property will be set to false.'
+                dateOfBirth:
+                  type: string
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+        description: Patch user properties to update.
+  /user:
+    post:
+      summary: Create New User111
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User Bob Fellow:
+                  value:
+                    id: 12
+                    firstName: Bob
+                    lastName: Fellow
+                    email: bob.fellow@gmail.com
+                    dateOfBirth: '1996-08-24'
+                    emailVerified: false
+                    createDate: '2020-11-18'
+                example-1:
+                  value:
+                    id: 0
+                    firstName: string
+                    lastName: string
+                    email: user@example.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    createDate: '2019-08-24'
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+              required:
+                - firstName
+                - lastName
+                - email
+                - dateOfBirth
+            examples:
+              Create User Bob Fellow:
+                value:
+                  firstName: Bob
+                  lastName: Fellow
+                  email: bob.fellow@gmail.com
+                  dateOfBirth: '1996-08-24'
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      x-examples:
+        Alice Smith:
+          id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the given user.
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1997-10-31'
+        emailVerified:
+          type: boolean
+          description: Set to true if the user's email has been verified.
+        createDate:
+          type: string
+          format: date
+          description: The date that the user was created.
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - emailVerified
+      x-internal: false
+  securitySchemes:
+    Токен в заголовке:
+      name: Authorization
+      type: apiKey
+      in: header
+    Токен в параметре запроса:
+      name: token
+      type: apiKey
+      in: query
+security:
+  - Токен в заголовке: []
+  - Токен в параметре запроса: []
