@@ -320,14 +320,14 @@ paths:
         description: ''
       description: Создает новую потребность в системе.
     get:
-      summary: ''
+      summary: Получение списка потребностей
       operationId: get-demands
       responses:
         '200':
           description: OK
       tags:
         - Потребности (demands)
-      description: ''
+      description: Возвращает список потребностей компании.
   '/users/{userId}':
     parameters:
       - schema:
