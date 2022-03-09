@@ -4,10 +4,10 @@ info:
   version: v3
   description: test api description. Make Potok API great again
 servers:
-  - url: 'https://app.potok.io/api/v3/'
+  - url: 'https://app.potok.io/api/v3'
     description: Potok.io
   - description: Dev environment
-    url: 'https://dev.stagings.potok.io/api/v3/'
+    url: 'https://dev.stagings.potok.io/api/v3'
 paths:
   /demands:
     post:
