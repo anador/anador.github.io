@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
-  title: test api example 123
+  title: Пример документации API
   version: v3
   description: test api description
 servers:
-  - url: 'http://localhost:3000/api/v3/'
-    description: test server
-  - description: dev server
-    url: 'http://localhost:5000/api/v3/'
+  - url: 'https://app.potok.io/api/v3/'
+    description: Potok.io
+  - description: Dev environment
+    url: 'https://dev.stagings.potok.io/api/v3/'
 paths:
   /demands:
     post:
@@ -658,6 +658,7 @@ paths:
           description: User Not Found
       operationId: get-users-userId
       description: Retrieve the information of the user with the matching user ID.
+      x-internal: true
     patch:
       summary: Update User Information
       operationId: patch-users-userId
@@ -773,6 +774,7 @@ paths:
                   dateOfBirth: '1996-08-24'
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
+      x-internal: true
 components:
   schemas:
     User:
@@ -816,7 +818,7 @@ components:
         - lastName
         - email
         - emailVerified
-      x-internal: false
+      x-internal: true
   securitySchemes:
     Токен в заголовке:
       name: Authorization
