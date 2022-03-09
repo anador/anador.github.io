@@ -1046,3 +1046,6 @@ components:
 security:
   - Токен в заголовке: []
   - Токен в параметре запроса: []
+tags:
+  - name: Потребности (demands)
+  - name: test
