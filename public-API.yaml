@@ -4,10 +4,10 @@ info:
   version: v3
   description: test api description. Make Potok API great again
 servers:
-  - url: 'https://app.potok.io/api/v3/'
+  - url: 'https://app.potok.io/api/v3'
     description: Potok.io
   - description: Dev environment
-    url: 'https://dev.stagings.potok.io/api/v3/'
+    url: 'https://dev.stagings.potok.io/api/v3'
 paths:
   /demands:
     post:
@@ -16,7 +16,11 @@ paths:
         - Потребности (demands)
       responses:
         '200':
-          description: 'Описание тела ответа. Наример, пишем, что будуту также отдаваться все динамические поля при их наличии.'
+          description: |-
+            Описание тела ответа. Наример, пишем, что будуту также отдаваться все динамические поля при их наличии.
+                    <div style="color: rgb(0 0 0);background-color: rgb(255 255 255);padding: 12px 0px 12px 12px;border-left: 5px solid rgb(240, 101, 96);">
+                      <b style="color:#F06560">Совет |</b>  Пишем дельный совет
+                    </div>  
           content:
             application/json:
               schema:
@@ -1043,6 +1047,15 @@ components:
       type: apiKey
       in: query
       description: 'Токен компании, создается в Поток в разделе `Генерация токенов`. Может передаваться одним из двух способов: в заголовке или в query-параметре.'
+  requestBodies:
+    test:
+      content:
+        application/json:
+          schema:
+            type: object
 security:
   - Токен в заголовке: []
   - Токен в параметре запроса: []
+tags:
+  - name: Потребности (demands)
+  - name: test
