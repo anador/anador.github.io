@@ -20,13 +20,198 @@ paths:
           content:
             application/json:
               schema:
+                description: ''
                 type: object
                 properties:
-                  status:
+                  id:
+                    type: number
+                  quantity:
+                    type: number
+                  job_id:
+                    type: number
+                  comment:
                     type: string
-                    example: OK
+                    minLength: 1
+                  states:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      required:
+                        - state_id
+                        - updated_at
+                        - workflow_name
+                        - workflow_id
+                      properties:
+                        state_id:
+                          type: string
+                          minLength: 1
+                        updated_at:
+                          type: string
+                          minLength: 1
+                        workflow_name:
+                          type: string
+                          minLength: 1
+                        workflow_id:
+                          type: number
+                        init_by:
+                          type: object
+                          properties: {}
+                          required: []
+                        additional_info:
+                          type: array
+                          items:
+                            required: []
+                            properties: {}
+                  sprint:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                        minLength: 1
+                      start_date:
+                        type: string
+                        minLength: 1
+                      finish_date:
+                        type: string
+                        minLength: 1
+                      start_status:
+                        type: string
+                        minLength: 1
+                    required:
+                      - id
+                      - name
+                      - start_date
+                      - finish_date
+                      - start_status
+                  author:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                        minLength: 1
+                      email:
+                        type: string
+                        minLength: 1
+                      avatar:
+                        type: string
+                        minLength: 1
+                    required:
+                      - id
+                      - name
+                      - email
+                      - avatar
+                  executive:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                        minLength: 1
+                      email:
+                        type: string
+                        minLength: 1
+                      avatar:
+                        type: string
+                        minLength: 1
+                    required:
+                      - id
+                      - name
+                      - email
+                      - avatar
+                  customer:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                        minLength: 1
+                    required:
+                      - id
+                      - name
                 required:
-                  - status
+                  - id
+                  - quantity
+                  - job_id
+                  - comment
+                  - states
+                  - sprint
+                  - author
+                  - executive
+                  - customer
+                x-examples:
+                  example-1:
+                    id: 0
+                    quantity: 0
+                    job_id: 0
+                    comment: string
+                    states:
+                      - state_id: string
+                        updated_at: string
+                        workflow_name: string
+                        workflow_id: 0
+                        init_by: {}
+                        additional_info:
+                          - string
+                    sprint:
+                      id: 0
+                      name: string
+                      start_date: string
+                      finish_date: string
+                      start_status: string
+                    author:
+                      id: 0
+                      name: string
+                      email: string
+                      avatar: string
+                    executive:
+                      id: 0
+                      name: string
+                      email: string
+                      avatar: string
+                    customer:
+                      id: 0
+                      name: Павел
+              examples:
+                example-1:
+                  value:
+                    id: 0
+                    quantity: 0
+                    job_id: 0
+                    comment: string
+                    states:
+                      - state_id: string
+                        updated_at: string
+                        workflow_name: string
+                        workflow_id: 0
+                        init_by: {}
+                        additional_info:
+                          - {}
+                    sprint:
+                      id: 0
+                      name: string
+                      start_date: string
+                      finish_date: string
+                      start_status: string
+                    author:
+                      id: 0
+                      name: string
+                      email: string
+                      avatar: string
+                    executive:
+                      id: 0
+                      name: string
+                      email: string
+                      avatar: string
+                    customer:
+                      id: 0
+                      name: string
         '422':
           description: Unprocessable Entity (WebDAV)
           content:
@@ -61,41 +246,53 @@ paths:
                 job_id:
                   type: integer
                   example: 123456
-                  description: id вакансии
+                  description: Id вакансии в Поток. Вакансия должна быть в статусе "Открыта" или "Приостановлена"
                 business_unit_id:
                   type: integer
-                  description: id объекта
+                  description: Id объекта потребности в Поток
                 quantity:
                   type: integer
                   description: Количество позиций
                   example: 5
+                  minimum: 1
                 comment:
                   type: string
+                  description: Комментарий к потребности
                 sprint_id:
+                  description: Id спринта потребности в Поток. Должен быть передан "Текущий" или "Следующий" период
                   type: integer
-                  description: id спринта
+                is_approved:
+                  type: boolean
+                  description: 'Флаг взятия потребности в работу. `true` - потребность в работе, `false` - потребность на рассмотрении'
+                schedule:
+                  type:
+                    - string
+                    - array
+                  description: Массив id графиков работы для потребности
+                  items:
+                    type: integer
                 customer_id:
                   type: integer
-                  description: id пользователя-заказчика потребности
+                  description: 'Id пользователя, который должен быть указан Заказчиком потребности. Пользователь должен не быть архивным. Пользователь должен иметь в Поток значение политики `can_client_demand`= `1` или `2`'
                   example: 0
                 executive_id:
                   type: integer
-                  description: id пользователя-ответственного за потребность
+                  description: 'Id пользователя, который должен быть указан Ответственным рекрутером потребности. Пользователь должен не быть архивным.'
                 priority_item_id:
                   type: integer
-                  description: id значения приоритета потребности
+                  description: Id значения приоритета потребности
                 author_id:
                   type: integer
-                  description: id пользователя-создателя потребности
+                  description: 'Id пользователя, который должен быть указан создателем потребности. Пользователь должен не быть архивным.'
               required:
                 - job_id
                 - business_unit_id
                 - quantity
                 - sprint_id
+                - is_approved
+                - schedule
                 - customer_id
-                - executive_id
                 - priority_item_id
-                - author_id
             examples:
               example-1:
                 value:
@@ -108,8 +305,20 @@ paths:
                   executive_id: 0
                   priority_item_id: 0
                   author_id: 0
-        description: тыц тыц описание
-      description: 'Вот здесь описываем, что делает метод'
+              example-2:
+                value:
+                  job_id: 123456
+                  business_unit_id: 0
+                  quantity: 5
+                  comment: string
+                  sprint_id:
+                    - null
+                  customer_id: 0
+                  executive_id: 0
+                  priority_item_id: 0
+                  author_id: 0
+        description: ''
+      description: Создает новую потребность в системе.
     get:
       summary: ''
       operationId: get-demands
@@ -118,6 +327,7 @@ paths:
           description: OK
       tags:
         - Потребности (demands)
+      description: ''
   '/users/{userId}':
     parameters:
       - schema:
@@ -128,7 +338,8 @@ paths:
         description: Id of an existing user.
     get:
       summary: Get User Info by User ID
-      tags: []
+      tags:
+        - test
       responses:
         '200':
           description: User Found
@@ -774,7 +985,9 @@ paths:
                   dateOfBirth: '1996-08-24'
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
-      x-internal: true
+      x-internal: false
+      tags:
+        - test
 components:
   schemas:
     User:
