@@ -868,7 +868,7 @@ paths:
         '404':
           description: User Not Found
       operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID. e
+      description: Retrieve the information of the user with the matching user ID.
       x-internal: true
     patch:
       summary: Update User Information
