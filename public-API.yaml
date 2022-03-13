@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Пример документации API test
+  title: Пример документации API
   version: v3
   description: test api description. Make Potok API great again
 servers:
@@ -269,9 +269,7 @@ paths:
                   type: boolean
                   description: 'Флаг взятия потребности в работу. `true` - потребность в работе, `false` - потребность на рассмотрении'
                 schedule:
-                  type:
-                    - string
-                    - array
+                  type: array
                   description: Массив id графиков работы для потребности
                   items:
                     type: integer
