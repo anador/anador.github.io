@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Пример документации API
+  title: Пример документации API test
   version: v3
   description: test api description. Make Potok API great again
 servers:
@@ -323,6 +323,7 @@ paths:
                   author_id: 0
         description: ''
       description: Создает новую потребность в системе.
+      parameters: []
     get:
       summary: Получение списка потребностей
       operationId: get-demands
