@@ -13,7 +13,7 @@ paths:
     post:
       summary: Создание потребности
       tags:
-        - Потребности (demands)
+        - Потребности
       responses:
         '200':
           description: |-
@@ -329,7 +329,7 @@ paths:
         '200':
           description: OK
       tags:
-        - Потребности (demands)
+        - Потребности
       description: Возвращает список потребностей компании.
   '/users/{userId}':
     parameters:
@@ -1056,5 +1056,5 @@ security:
   - Токен в заголовке: []
   - Токен в параметре запроса: []
 tags:
-  - name: Потребности (demands)
+  - name: Потребности
   - name: test
