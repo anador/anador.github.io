@@ -228,6 +228,10 @@ paths:
                     example: пельмень упал со стола
                 required:
                   - status
+              examples:
+                example-1:
+                  value:
+                    status: пельмень упал со стола
       operationId: post-demands
       requestBody:
         content:
