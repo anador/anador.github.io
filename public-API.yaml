@@ -4,10 +4,10 @@ info:
   version: v3
   description: test api description. Make Potok API great again
 servers:
-  - url: 'https://app.potok.io/api/v3'
-    description: Potok.io
+  - url: 'https://app.test.ru/api/v3'
+    description: test.ru
   - description: Dev environment
-    url: 'https://dev.stagings.potok.io/api/v3'
+    url: 'https://dev.test.ru/api/v3'
 paths:
   /demands:
     post:
@@ -322,6 +322,7 @@ paths:
         description: ''
       description: Создает новую потребность в системе.
       parameters: []
+      x-internal: false
     get:
       summary: Получение списка потребностей
       operationId: get-demands
@@ -1040,12 +1041,12 @@ components:
       name: Authorization
       type: apiKey
       in: header
-      description: 'Токен компании, создается в Поток в разделе `Генерация токенов`. Может передаваться одним из двух способов: в заголовке или в query-параметре.'
+      description: ''
     Токен в параметре запроса:
       name: token
       type: apiKey
       in: query
-      description: 'Токен компании, создается в Поток в разделе `Генерация токенов`. Может передаваться одним из двух способов: в заголовке или в query-параметре.'
+      description: ''
   requestBodies:
     test:
       content:
