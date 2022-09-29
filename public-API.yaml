@@ -1,352 +1,297 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
-  title: Пример документации API
+  title: Potok API
   version: v3
-  description: test api description. Make Potok API great again
+  description: |-
+    # Общая информация
+    API Potok позволяет клиентам получать информацию путем отправки запроса на сервера Potok
+    * Все методы API Potok  работают по протоколу HTTPS;
+    * Даты форматируются в соответствии с [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601): `YYYY-MM-DDThh:mm:ss.mmm±hh:mm`.
+    * Все вызовы содержат: `Content-Type: application/json`*
+
+    *-если для запроса не указано иное
+
+    В случае отсутствия заполненных данных в Potok по какому-либо параметру, возвращаемому в ответе, параметр может быть исключен из структуры ответа или иметь значение `null`.
+
+    ## Ограничение количества запросов
+    В Potok имеются ограничения на количество запросов в определенный промежуток времени. 
+
+    При превышении указанного количества запросов будет возвращаться ошибка `429` - превышено допустимое количество запросов в секунду.
+    |Время (в секундах)|Ограничение (кол-во запросов)|
+    |:--:|:---:|
+    |10|100|
+
+    ## Коды ошибок
+    Основные ошибки возникающие при работе с API Potok указаны в таблице ниже.
+
+    В случае неполадок и сбоев, возможны ответы с кодом `500` или другими `5XX`.
+
+    При каждой ошибке, помимо кода ответа, в теле ответа может быть выдана дополнительная информация, позволяющая разработчику понять причину соответствующего ответа.
+    | Код ошибки | Описание|
+    |:-------:|:------------:|
+    |400| Ошибка параметров запроса
+    |401 | Отказ в доступе. Неверная авторизация или аутентификация|
+    |403| Объект есть и доступ к нему запрещён
+    |404| Сервер не может найти запрашиваемый объект
+    |422 | Ошибки при заполнении полей: не заполнено поле, неверный формат и ошибки валидации|
+    |429| Превышено допустимое количество запросов в секунду
+
+    ## Генерация токена
+    Для получения доступа к системе нужно сгенерировать токен. Сделать это можно в настройках компании в разделе **Генерация токенов** (доступ к разделу согласно настроенной ролевой модели). 
+
+    Для создания токена нужно указать его название и нажать кнопку **Создать токен**. Новый токен появится в списке действующих токенов. Удалить токен можно с помощью иконки с корзиной рядом с ним.
+
+    В случае ошибки аутентификации появится ошибка `401`
+  summary: test
+  contact:
+    name: Daniel
 servers:
-  - url: 'https://app.test.ru/api/v3'
-    description: test.ru
-  - description: Dev environment
-    url: 'https://dev.test.ru/api/v3'
+  - url: 'https://app.potok.io/api/v3'
+    description: Potok.io
 paths:
-  /demands:
-    post:
-      summary: Создание потребности
+  /jobs.json:
+    get:
+      summary: Получение списка вакансий
       tags:
-        - Потребности
+        - вакансии
+      operationId: get-api-v3-jobs.json
+      description: |-
+        Получение списка вакансий компании. Метод возвращает статические поля, а также все динамические поля, набор которых зависит от настроек формы вакансии. Описание приведено для стандартной формы, в случае ее изменения метод может возвращать другой набор параметров.
+        Сотрировка вакансий в ответе по дате создания по убыванию.
+      parameters:
+        - schema:
+            type: string
+            example: active
+            enum:
+              - all
+              - active
+            default: active
+          in: query
+          name: by_scope
+          description: '`all` (чтобы получить все вакансии) или `active` (чтобы получить активные вакансии). Значение по умолчанию `active`'
+          allowEmptyValue: true
+        - schema:
+            type: number
+            example: 1
+            default: 1
+          in: query
+          name: page
+          description: Номер страницы списка вакансий (начиная с 1)
+          allowEmptyValue: true
+        - schema:
+            type: number
+            maxLength: 3
+            maximum: 100
+            minimum: 1
+            example: 50
+            default: 50
+          in: query
+          name: per_page
+          description: Количество элементов на странице (по умолчанию 50)
+          allowEmptyValue: true
       responses:
         '200':
-          description: |-
-            Описание тела ответа. Например, пишем, что будуту также отдаваться все динамические поля при их наличии.
-                    <div style="color: rgb(0 0 0);background-color: rgb(255 255 255);padding: 12px 0px 12px 12px;border-left: 5px solid rgb(240, 101, 96);">
-                      <b style="color:#F06560">Совет |</b>  Пишем дельный совет
-                    </div>  
+          description: OK
           content:
             application/json:
               schema:
                 description: ''
                 type: object
-                properties:
-                  id:
-                    type: number
-                  quantity:
-                    type: number
-                  job_id:
-                    type: number
-                  comment:
-                    type: string
-                    minLength: 1
-                  states:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      required:
-                        - state_id
-                        - updated_at
-                        - workflow_name
-                        - workflow_id
-                      properties:
-                        state_id:
-                          type: string
-                          minLength: 1
-                        updated_at:
-                          type: string
-                          minLength: 1
-                        workflow_name:
-                          type: string
-                          minLength: 1
-                        workflow_id:
-                          type: number
-                        init_by:
-                          type: object
-                          properties: {}
-                          required: []
-                        additional_info:
-                          type: array
-                          items:
-                            required: []
-                            properties: {}
-                  sprint:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                        minLength: 1
-                      start_date:
-                        type: string
-                        minLength: 1
-                      finish_date:
-                        type: string
-                        minLength: 1
-                      start_status:
-                        type: string
-                        minLength: 1
-                    required:
-                      - id
-                      - name
-                      - start_date
-                      - finish_date
-                      - start_status
-                  author:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                        minLength: 1
-                      email:
-                        type: string
-                        minLength: 1
-                      avatar:
-                        type: string
-                        minLength: 1
-                    required:
-                      - id
-                      - name
-                      - email
-                      - avatar
-                  executive:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                        minLength: 1
-                      email:
-                        type: string
-                        minLength: 1
-                      avatar:
-                        type: string
-                        minLength: 1
-                    required:
-                      - id
-                      - name
-                      - email
-                      - avatar
-                  customer:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                        minLength: 1
-                    required:
-                      - id
-                      - name
-                required:
-                  - id
-                  - quantity
-                  - job_id
-                  - comment
-                  - states
-                  - sprint
-                  - author
-                  - executive
-                  - customer
                 x-examples:
                   example-1:
-                    id: 0
-                    quantity: 0
-                    job_id: 0
-                    comment: string
-                    states:
-                      - state_id: string
-                        updated_at: string
-                        workflow_name: string
-                        workflow_id: 0
-                        init_by: {}
-                        additional_info:
-                          - string
-                    sprint:
-                      id: 0
-                      name: string
-                      start_date: string
-                      finish_date: string
-                      start_status: string
-                    author:
-                      id: 0
-                      name: string
-                      email: string
-                      avatar: string
-                    executive:
-                      id: 0
-                      name: string
-                      email: string
-                      avatar: string
-                    customer:
-                      id: 0
-                      name: Павел
-              examples:
-                example-1:
-                  value:
-                    id: 0
-                    quantity: 0
-                    job_id: 0
-                    comment: string
-                    states:
-                      - state_id: string
-                        updated_at: string
-                        workflow_name: string
-                        workflow_id: 0
-                        init_by: {}
-                        additional_info:
-                          - {}
-                    sprint:
-                      id: 0
-                      name: string
-                      start_date: string
-                      finish_date: string
-                      start_status: string
-                    author:
-                      id: 0
-                      name: string
-                      email: string
-                      avatar: string
-                    executive:
-                      id: 0
-                      name: string
-                      email: string
-                      avatar: string
-                    customer:
-                      id: 0
-                      name: string
-        '422':
-          description: Unprocessable Entity (WebDAV)
-          content:
-            application/json:
-              schema:
-                type: object
+                    data:
+                      - id: 1911
+                        name: Начальник технического отдела
+                        description: string
+                        company_department:
+                          archived: false
+                          id: 52
+                          name: IT Department
+                        schedule_type: fullDay
+                        salary_from: 10000
+                        salary_to: 20000
+                        code: '1599'
+                        code_enable: false
+                        experience_type: noExperience
+                        employment_type: full
+                        currency_type: RUR
+                        key_skills:
+                          - умелый
+                        city: '1'
+                        published: true
+                        publish_location: string
+                        applicants_count:
+                          all: 4
+                          active: 2
+                        created_at: '2020-07-17T10:38:55.904+03:00'
+                        updated_at: '2022-08-22T08:50:21.638+03:00'
+                        stages:
+                          - id: 1432
+                            name: Проверка СБ
+                            serial: 456
+                            active_applicants: 1
+                            declined_applicants: 1
+                            stage_type: security
+                        author:
+                          id: 148846
+                          name: Иван Иванов Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://avatarka.zdes/ava.jpg'
+                          phones:
+                            - '87771110000'
+                        job_bindings:
+                          - id: 8899
+                            type: 'JobBinding::Career'
+                            url: 'https://ivanov@mysupersite.com/open/jobs/223234'
+                            info:
+                              name: Повар
+                              description: string
+                              schedule_type: fullDay
+                        executive_recruiter:
+                          id: 412412
+                          name: Иванов Иван Иванович
+                          email: ivanov@ivan.tut
+                          avatar: 'https://avatarka.zdes/ava.jpg'
+                          phones:
+                            - '18888324'
+                        jobs_users:
+                          - id: 1231
+                            job_id: 4322
+                            role:
+                              id: 13
+                              company_id: 99
+                              name: Суперадмин
+                              role_type: superadmin
+                              billing: true
+                            user:
+                              id: 14
+                              name: Alabai
+                              email: bumaga@tochka.cot
+                              avatar: 'https://avatarka.zdes/ava.jpg'
+                              phones:
+                                - '123123124'
+                        first_opened_at: '2020-07-17T10:38:55.900+03:00'
+                        archived: true
+                        demand: 5
+                        state_id: opened
+                        closed_at: string
+                        closure_date: '2021-09-30T00:00:00.000+03:00'
+                        private: true
+                        direction_code: point
+                        job_type: point
+                        staffing_item_full_ext_id: position_12423
+                        staffing_item_parent_full_ext_id: department_33448
                 properties:
-                  status:
-                    type: string
-                    example: пельмень упал со стола
+                  data:
+                    $ref: '#/components/schemas/Job'
                 required:
-                  - status
-      operationId: post-demands
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Объект
-              x-examples:
-                example-1:
-                  job_id: 0
-                  business_unit_id: 0
-                  quantity: 0
-                  comment: string
-                  sprint_id: 0
-                  customer_id: 0
-                  executive_id: 0
-                  priority_item_id: 0
-                  author_id: 0
-              properties:
-                job_id:
-                  type: integer
-                  example: 123456
-                  description: Id вакансии в Поток. Вакансия должна быть в статусе "Открыта" или "Приостановлена"
-                business_unit_id:
-                  type: integer
-                  description: Id объекта потребности в Поток
-                quantity:
-                  type: integer
-                  description: Количество позиций
-                  example: 5
-                  minimum: 1
-                comment:
-                  type: string
-                  description: Комментарий к потребности
-                sprint_id:
-                  description: Id спринта потребности в Поток. Должен быть передан "Текущий" или "Следующий" период
-                  type: integer
-                is_approved:
-                  type: boolean
-                  description: 'Флаг взятия потребности в работу. `true` - потребность в работе, `false` - потребность на рассмотрении'
-                schedule:
-                  type: array
-                  description: Массив id графиков работы для потребности
-                  items:
-                    type: integer
-                customer_id:
-                  type: integer
-                  description: 'Id пользователя, который должен быть указан Заказчиком потребности. Пользователь должен не быть архивным. Пользователь должен иметь в Поток значение политики `can_client_demand`= `1` или `2`'
-                  example: 0
-                executive_id:
-                  type: integer
-                  description: 'Id пользователя, который должен быть указан Ответственным рекрутером потребности. Пользователь должен не быть архивным.'
-                priority_item_id:
-                  type: integer
-                  description: Id значения приоритета потребности
-                author_id:
-                  type: integer
-                  description: 'Id пользователя, который должен быть указан создателем потребности. Пользователь должен не быть архивным.'
-              required:
-                - job_id
-                - business_unit_id
-                - quantity
-                - sprint_id
-                - is_approved
-                - schedule
-                - customer_id
-                - priority_item_id
-            examples:
-              example-1:
-                value:
-                  job_id: 0
-                  business_unit_id: 0
-                  quantity: 0
-                  comment: string
-                  sprint_id: 0
-                  customer_id: 0
-                  executive_id: 0
-                  priority_item_id: 0
-                  author_id: 0
-              example-2:
-                value:
-                  job_id: 123456
-                  business_unit_id: 0
-                  quantity: 5
-                  comment: string
-                  sprint_id:
-                    - null
-                  customer_id: 0
-                  executive_id: 0
-                  priority_item_id: 0
-                  author_id: 0
-        description: ''
-      description: Создает новую потребность в системе.
-      parameters: []
-      x-internal: false
-    get:
-      summary: Получение списка потребностей
-      operationId: get-demands
-      responses:
-        '200':
-          description: OK
+                  - data
+              examples:
+                Пример ответа:
+                  value:
+                    data:
+                      - id: 1911
+                        name: Начальник технического отдела
+                        description: |-
+                          <div>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                          </div>
+                        schedule_type: fullDay
+                        salary_from: 10000
+                        salary_to: 20000
+                        code: 12
+                        code_enable: true
+                        experience_type: noExperience
+                        employment_type: full
+                        currency_type: RUR
+                        key_skills:
+                          - стрессоустойчивый
+                        city: '1'
+                        created_at: '2020-07-17T10:38:55.904+03:00'
+                        updated_at: '2021-07-17T10:38:55.904+03:00'
+                        first_opened_at: '2020-07-17T10:38:55.904+03:00'
+                        archived: false
+                        demand: 1
+                        closed_at: '2021-07-17T10:38:55.904+03:00'
+                        closure_date: '2022-07-17T10:38:55.904+03:00'
+                        private: false
+                        direction_code: '1357'
+                        job_type: point
+                        staffing_item_full_ext_id: position_1234
+                        staffing_item_parent_full_ext_id: department_4321
+                        priority: highest
+                        state_id: opened
+                        company_department:
+                          archived: false
+                          id: 3121
+                          name: IT Department
+                        published: true
+                        publish_location: 'https://career.potok.io/open/jobs/1911'
+                        applicants_count:
+                          all: 3
+                          active: 2
+                        stages:
+                          - id: 1918
+                            name: Проверка СБ
+                            serial: 789
+                            active_applicants: 2
+                            declined_applicants: 1
+                            stage_type: security
+                        author:
+                          id: 11
+                          name: Иванов Иван Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                          phones:
+                            - '79996543221'
+                        job_bindings:
+                          - id: 657
+                            type: 'JobBinding::Career'
+                            url: 'https://career.potok.io/open/jobs/1911'
+                            info:
+                              name: Начальник технического отдела
+                              description: |-
+                                <div>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                                </div>
+                              schedule_type: fullDay
+                        executive_recruiter:
+                          id: 11
+                          name: Иванов Иван Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                          phones:
+                            - '79996543221'
+                        jobs_users:
+                          - id: 1234
+                            job_id: 1911
+                            role:
+                              id: 4321
+                              company_id: 99
+                              name: Суперадмин
+                              role_type: superadmin
+                              billing: true
+                            user:
+                              id: 11
+                              name: Иванов Иван Иванович
+                              email: ivan@ivanov.com
+                              avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                              phones:
+                                - '79996543221'
+          headers: {}
+        '401':
+          description: Отказ в доступе. Неверная авторизация или аутентификация
+    post:
+      summary: Создание вакансии
       tags:
-        - Потребности
-      description: Возвращает список потребностей компании.
-  '/users/{userId}':
-    parameters:
-      - schema:
-          type: integer
-        name: userId
-        in: path
-        required: true
-        description: Id of an existing user.
-    get:
-      summary: Get User Info by User ID
-      tags:
-        - test
+        - вакансии
       responses:
-        '200':
-          description: User Found
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -356,706 +301,1160 @@ paths:
                   example-1:
                     data:
                       - id: 0
-                        first_name: string
-                        last_name: string
-                        middle_name: string
                         name: string
-                        address: string
-                        email: string
-                        title: string
-                        salary: 0
-                        source_type: string
-                        source_url: string
-                        born: string
-                        skype: string
-                        phones:
+                        description: string
+                        company_department: {}
+                        schedule_type: string
+                        salary_from: 0
+                        salary_to: 0
+                        code: string
+                        code_enable: true
+                        experience_type: string
+                        employment_type: string
+                        currency_type: string
+                        key_skills:
                           - string
-                        accounts:
-                          - url: string
-                            icon_id: string
-                        tags:
-                          - string
+                        city: string
+                        published: true
+                        publish_location: {}
+                        applicants_count:
+                          all: 0
+                          active: 0
                         created_at: string
                         updated_at: string
-                        avatar: string
-                        resumes:
-                          - id: 0
-                            cv_original: string
-                            cv_html: string
-                            cv_params:
-                              title: string
-                              education:
-                                level:
-                                  name: string
-                                primary:
-                                  - name: string
-                                    id: string
-                              skill_set:
-                                - string
-                              experience:
-                                - company: string
-                                  start: string
-                                  end: string
-                                  position: string
-                                  description: string
-                        jobs:
+                        stages:
                           - id: 0
                             name: string
-                            stage_name: string
-                            active: true
-                        source_name: string
-                        another_emails:
-                          - string
-                        states:
-                          - state_id: string
-                            updated_at: string
-                            workflow_name: string
-                            workflow_id: 0
-                            init_by: {}
-                            additional_info:
-                              - string
-                        events:
+                            serial: 0
+                            active_applicants: 0
+                            declined_applicants: 0
+                        author:
+                          id: 0
+                          name: string
+                          avatar: string
+                        job_bindings:
+                          - {}
+                        executive_recruiter:
+                          id: 0
+                          name: string
+                          avatar: string
+                        jobs_users:
                           - id: 0
-                            subject: string
-                            body: string
-                            applicant:
+                            job_id: 0
+                            role:
                               id: 0
-                              first_name: string
-                              last_name: string
-                              middle_name: string
-                            job: string
-                            from: string
-                            to: string
-                            type: string
-                        ajs_joins:
-                          - job:
+                              company_id: 0
+                              name: string
+                              role_type: string
+                            user:
                               id: 0
                               name: string
-                              stage_name: string
-                              active: true
-                            employee_ext_id: 0
-                            stage:
-                              id: 0
-                              name: string
-                              serial: 0
-                              active_applicants: 0
-                              declined_applicants: 0
-                              stage_type: string
-                        dynamic_array_meeting_locations:
-                          - string
-                        dynamic_objects_array_previous_employment:
-                          - employer: string
-                            position: string
-                            period_to: string
-                            to_present: string
-                            period_from: string
-                        dynamic_string_field1: string
-                        dynamic_string_field2: string
-                    per_page: 0
-                    pages: 0
-                    page: 0
+                              email: string
+                              avatar: string
+                        first_opened_at: string
+                        archived: true
+                        demand: 0
+                        state_id: string
+                        closed_at: string
+                        closure_date: string
+                        private: true
+                        direction_code: string
+                        job_type: string
+                        staffing_item_full_ext_id: string
+                        staffing_item_parent_full_ext_id: string
                 properties:
                   data:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      description: test
-                      properties:
-                        id:
-                          type: number
-                          description: test
-                        first_name:
-                          type: string
-                          minLength: 1
-                        last_name:
-                          type: string
-                          minLength: 1
-                        middle_name:
-                          type: string
-                          minLength: 1
-                        name:
-                          type: string
-                          minLength: 1
-                        address:
-                          type: string
-                          minLength: 1
-                        email:
-                          type: string
-                          minLength: 1
-                        title:
-                          type: string
-                          minLength: 1
-                        salary:
-                          type: number
-                        source_type:
-                          type: string
-                          minLength: 1
-                        source_url:
-                          type: string
-                          minLength: 1
-                        born:
-                          type: string
-                          minLength: 1
-                        skype:
-                          type: string
-                          minLength: 1
-                        phones:
-                          type: array
-                          items:
-                            type: object
-                        accounts:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              url:
-                                type: string
-                                minLength: 1
-                              icon_id:
-                                type: string
-                                minLength: 1
-                            required:
-                              - url
-                              - icon_id
-                        tags:
-                          type: array
-                          items:
-                            type: object
-                        created_at:
-                          type: string
-                          minLength: 1
-                        updated_at:
-                          type: string
-                          minLength: 1
-                        avatar:
-                          type: string
-                          minLength: 1
-                        resumes:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: number
-                              cv_original:
-                                type: string
-                                minLength: 1
-                              cv_html:
-                                type: string
-                                minLength: 1
-                              cv_params:
-                                type: object
-                                properties:
-                                  title:
-                                    type: string
-                                    minLength: 1
-                                  education:
-                                    type: object
-                                    required:
-                                      - level
-                                      - primary
-                                    properties:
-                                      level:
-                                        type: object
-                                        required:
-                                          - name
-                                        properties:
-                                          name:
-                                            type: string
-                                            minLength: 1
-                                      primary:
-                                        type: array
-                                        uniqueItems: true
-                                        minItems: 1
-                                        items:
-                                          type: object
-                                          properties:
-                                            name:
-                                              type: string
-                                              minLength: 1
-                                            id:
-                                              type: string
-                                              minLength: 1
-                                          required:
-                                            - name
-                                            - id
-                                  skill_set:
-                                    type: array
-                                    items:
-                                      type: object
-                                  experience:
-                                    type: array
-                                    uniqueItems: true
-                                    minItems: 1
-                                    items:
-                                      type: object
-                                      properties:
-                                        company:
-                                          type: string
-                                          minLength: 1
-                                        start:
-                                          type: string
-                                          minLength: 1
-                                        end:
-                                          type: string
-                                          minLength: 1
-                                        position:
-                                          type: string
-                                          minLength: 1
-                                        description:
-                                          type: string
-                                          minLength: 1
-                                      required:
-                                        - company
-                                        - start
-                                        - end
-                                        - position
-                                        - description
-                                required:
-                                  - title
-                                  - education
-                                  - skill_set
-                                  - experience
-                            required:
-                              - id
-                              - cv_original
-                              - cv_html
-                        jobs:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: number
-                              name:
-                                type: string
-                                minLength: 1
-                              stage_name:
-                                type: string
-                                minLength: 1
-                              active:
-                                type: boolean
-                            required:
-                              - id
-                              - name
-                              - stage_name
-                              - active
-                        source_name:
-                          type: string
-                          minLength: 1
-                        another_emails:
-                          type: array
-                          items:
-                            type: object
-                        states:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              state_id:
-                                type: string
-                                minLength: 1
-                              updated_at:
-                                type: string
-                                minLength: 1
-                              workflow_name:
-                                type: string
-                                minLength: 1
-                              workflow_id:
-                                type: number
-                              init_by:
-                                type: object
-                              additional_info:
-                                type: array
-                                items:
-                                  type: object
-                            required:
-                              - state_id
-                              - updated_at
-                              - workflow_name
-                              - workflow_id
-                        events:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: number
-                              subject:
-                                type: string
-                                minLength: 1
-                              body:
-                                type: string
-                                minLength: 1
-                              applicant:
-                                type: object
-                                properties:
-                                  id:
-                                    type: number
-                                  first_name:
-                                    type: string
-                                    minLength: 1
-                                  last_name:
-                                    type: string
-                                    minLength: 1
-                                  middle_name:
-                                    type: string
-                                    minLength: 1
-                                required:
-                                  - id
-                                  - first_name
-                                  - last_name
-                                  - middle_name
-                              job:
-                                type: string
-                                minLength: 1
-                              from:
-                                type: string
-                                minLength: 1
-                              to:
-                                type: string
-                                minLength: 1
-                              type:
-                                type: string
-                                minLength: 1
-                            required:
-                              - id
-                              - subject
-                              - body
-                              - job
-                              - from
-                              - to
-                              - type
-                        ajs_joins:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              job:
-                                type: object
-                                properties:
-                                  id:
-                                    type: number
-                                  name:
-                                    type: string
-                                    minLength: 1
-                                  stage_name:
-                                    type: string
-                                    minLength: 1
-                                  active:
-                                    type: boolean
-                                required:
-                                  - id
-                                  - name
-                                  - stage_name
-                                  - active
-                              employee_ext_id:
-                                type: number
-                              stage:
-                                type: object
-                                properties:
-                                  id:
-                                    type: number
-                                  name:
-                                    type: string
-                                    minLength: 1
-                                  serial:
-                                    type: number
-                                  active_applicants:
-                                    type: number
-                                  declined_applicants:
-                                    type: number
-                                  stage_type:
-                                    type: string
-                                    minLength: 1
-                                required:
-                                  - id
-                                  - name
-                                  - serial
-                                  - active_applicants
-                                  - declined_applicants
-                                  - stage_type
-                            required:
-                              - employee_ext_id
-                        dynamic_array_meeting_locations:
-                          type: array
-                          items:
-                            type: object
-                        dynamic_objects_array_previous_employment:
-                          type: array
-                          uniqueItems: true
-                          minItems: 1
-                          items:
-                            type: object
-                            properties:
-                              employer:
-                                type: string
-                                minLength: 1
-                              position:
-                                type: string
-                                minLength: 1
-                              period_to:
-                                type: string
-                                minLength: 1
-                              to_present:
-                                type: string
-                                minLength: 1
-                              period_from:
-                                type: string
-                                minLength: 1
-                            required:
-                              - employer
-                              - position
-                              - period_to
-                              - to_present
-                              - period_from
-                        dynamic_string_field1:
-                          type: string
-                          minLength: 1
-                        dynamic_string_field2:
-                          type: string
-                          minLength: 1
-                      required:
-                        - first_name
-                        - last_name
-                        - middle_name
-                        - name
-                        - address
-                        - email
-                        - title
-                        - salary
-                        - source_type
-                        - source_url
-                        - born
-                        - skype
-                        - created_at
-                        - updated_at
-                        - avatar
-                        - source_name
-                        - dynamic_string_field1
-                        - dynamic_string_field2
-                  per_page:
-                    type: number
-                  pages:
-                    type: number
-                  page:
-                    type: number
-                required:
-                  - data
-                  - per_page
-                  - pages
-                  - page
+                    $ref: '#/components/schemas/Job'
               examples:
-                Get User Alice Smith:
+                Пример ответа:
                   value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    signUpDate: '2019-08-24'
-        '404':
-          description: User Not Found
-      operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID.
-      x-internal: true
-    patch:
-      summary: Update User Information
-      operationId: patch-users-userId
-      responses:
-        '200':
-          description: User Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                Updated User Rebecca Baker:
-                  value:
-                    id: 13
-                    firstName: Rebecca
-                    lastName: Baker
-                    email: rebecca@gmail.com
-                    dateOfBirth: '1985-10-02'
-                    emailVerified: false
-                    createDate: '2019-08-24'
-        '404':
-          description: User Not Found
-        '409':
-          description: Email Already Taken
-      description: Update the information of an existing user.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                  description: 'If a new email is given, the user''s email verified property will be set to false.'
-                dateOfBirth:
-                  type: string
-            examples:
-              Update First Name:
-                value:
-                  firstName: Rebecca
-              Update Email:
-                value:
-                  email: rebecca@gmail.com
-              Update Last Name & Date of Birth:
-                value:
-                  lastName: Baker
-                  dateOfBirth: '1985-10-02'
-        description: Patch user properties to update.
-  /user:
-    post:
-      summary: Create New User111
-      operationId: post-user
-      responses:
-        '200':
-          description: User Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                New User Bob Fellow:
-                  value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
-                example-1:
-                  value:
-                    id: 0
-                    firstName: string
-                    lastName: string
-                    email: user@example.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    createDate: '2019-08-24'
+                    data:
+                      - id: 1911
+                        name: Начальник технического отдела
+                        description: |-
+                          <div>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                          </div>
+                        schedule_type: fullDay
+                        salary_from: 10000
+                        salary_to: 20000
+                        code: 12
+                        code_enable: true
+                        experience_type: noExperience
+                        employment_type: full
+                        currency_type: RUR
+                        key_skills:
+                          - стрессоустойчивый
+                        city: '1'
+                        created_at: '2020-07-17T10:38:55.904+03:00'
+                        updated_at: '2021-07-17T10:38:55.904+03:00'
+                        first_opened_at: '2020-07-17T10:38:55.904+03:00'
+                        archived: false
+                        demand: 1
+                        closed_at: '2021-07-17T10:38:55.904+03:00'
+                        closure_date: '2022-07-17T10:38:55.904+03:00'
+                        private: false
+                        direction_code: '1357'
+                        job_type: point
+                        staffing_item_full_ext_id: position_1234
+                        staffing_item_parent_full_ext_id: department_4321
+                        priority: highest
+                        state_id: opened
+                        company_department:
+                          archived: false
+                          id: 3121
+                          name: IT Department
+                        published: true
+                        publish_location: 'https://career.potok.io/open/jobs/1911'
+                        applicants_count:
+                          all: 3
+                          active: 2
+                        stages:
+                          - id: 1918
+                            name: Проверка СБ
+                            serial: 789
+                            active_applicants: 2
+                            declined_applicants: 1
+                            stage_type: security
+                        author:
+                          id: 11
+                          name: Иванов Иван Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                          phones:
+                            - '79996543221'
+                        job_bindings:
+                          - id: 657
+                            type: 'JobBinding::Career'
+                            url: 'https://career.potok.io/open/jobs/1911'
+                            info:
+                              name: Начальник технического отдела
+                              description: |-
+                                <div>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                                </div>
+                              schedule_type: fullDay
+                        executive_recruiter:
+                          id: 11
+                          name: Иванов Иван Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                          phones:
+                            - '79996543221'
+                        jobs_users:
+                          - id: 1234
+                            job_id: 1911
+                            role:
+                              id: 4321
+                              company_id: 99
+                              name: Суперадмин
+                              role_type: superadmin
+                              billing: true
+                            user:
+                              id: 11
+                              name: Иванов Иван Иванович
+                              email: ivan@ivanov.com
+                              avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                              phones:
+                                - '79996543221'
         '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
+          $ref: '#/components/responses/400'
+        '401':
+          description: Отказ в доступе. Неверная авторизация или аутентификация
+        '422':
+          $ref: '#/components/responses/422'
+      operationId: post-api-v3-jobs.json
+      description: |-
+        Соаздние новой вакансии.  Описание приведено для стандартной формы, в случае ее изменения метод может принимать другой набор полей или иметь отличные от описанного валидации.
+        Метод возвращает данные созданной вакансии: статические поля, а также все динамические поля, набор которых зависит от настроек формы вакансии.
       requestBody:
         content:
           application/json:
             schema:
+              description: ''
               type: object
+              x-examples:
+                example-1:
+                  name: string
+                  description: string
+                  city: 0
+                  salary_from: 0
+                  salary_to: 0
+                  employment_type: string
+                  experience_type: string
+                  schedule_type: string
+                  currency_type: string
+                  code: 0
+                  form: {}
+                  key_skills:
+                    - string
+                  job_type: string
+                  is_draft: true
+                  company_department_id: 0
               properties:
-                firstName:
+                name:
                   type: string
-                lastName:
+                  description: Название вакансии
+                description:
                   type: string
-                email:
+                  description: Описание вакансии
+                city:
+                  type: number
+                  description: |-
+                    ID Города вакансии
+
+                    Источник - словарь cities
+                salary_from:
+                  type: number
+                  description: Ожидаемая ЗП от
+                salary_to:
+                  type: number
+                  description: Ожидаемая ЗП до
+                employment_type:
                   type: string
-                dateOfBirth:
+                  description: ID Занятости (словарь - `employment_type`)
+                experience_type:
                   type: string
-                  format: date
+                  description: ID Опыта работы (словарь - `experience_type`)
+                schedule_type:
+                  type: string
+                  description: ID Графика работы (словарь - `schedule_type`)
+                currency_type:
+                  type: string
+                  description: ID Валюты (словарь - `currency_type`)
+                key_skills:
+                  description: Массив ключевых навыков
+                  type: array
+                  items:
+                    type: string
+                job_type:
+                  type: string
+                  description: |-
+                    Воронка подбора вакансии (в компании могут быть добавлены дополнительные воронки)
+
+                    `point` - точечный подбор
+                is_draft:
+                  type: boolean
+                  description: |-
+                    Признак черновика вакансии
+
+                    `true` - черновик вакансии
+
+                    `false` - вакансия не является черновиком
+                company_department_id:
+                  type: number
+                  description: 'ID Отдела. Может быть получен из `GET /api/v2/company_departments.json`, механизм аутентификации аналогичен'
+                demand:
+                  type: number
+                  description: Количество вакантных мест
+                private:
+                  description: |-
+                    Признак конфиденциальности вакансии
+
+                    `true` - конфиденциальная вакансия
+
+                    `false` - неконфиденциальная вакансия
+                  type: boolean
+                closure_date:
+                  type: string
+                  description: 'Ожидаемая дата закрытия, `YYYY-MM-DD`'
+                additional_info:
+                  type: string
+                  description: Комментарий к вакансии
               required:
-                - firstName
-                - lastName
-                - email
-                - dateOfBirth
+                - name
             examples:
-              Create User Bob Fellow:
+              Пример запроса:
                 value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
-                  dateOfBirth: '1996-08-24'
-        description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
+                  name: Начальник технического отдела
+                  description: Вакансия для тех. отдела ООО Аврора
+                  city: 1
+                  salary_from: 100000
+                  salary_to: 200000
+                  employment_type: full
+                  experience_type: noExperience
+                  schedule_type: fullDay
+                  currency_type: RUR
+                  key_skills:
+                    - стрессоустойчивость
+                  job_type: point
+                  is_draft: false
+                  company_department_id: ''
+                  demand: 1
+                  private: false
+                  closure_date: '2023-07-17'
+                  additional_info: закрыть как можно скорее
+        description: ''
       x-internal: false
+    parameters: []
+  '/jobs/{id}.json':
+    get:
+      summary: Получение вакансии по ID
       tags:
-        - test
+        - вакансии
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      - id: 0
+                        name: string
+                        description: string
+                        company_department: {}
+                        schedule_type: string
+                        salary_from: 0
+                        salary_to: 0
+                        code: string
+                        code_enable: true
+                        experience_type: string
+                        employment_type: string
+                        currency_type: string
+                        key_skills:
+                          - string
+                        city: string
+                        published: true
+                        publish_location: {}
+                        applicants_count:
+                          all: 0
+                          active: 0
+                        created_at: string
+                        updated_at: string
+                        stages:
+                          - id: 0
+                            name: string
+                            serial: 0
+                            active_applicants: 0
+                            declined_applicants: 0
+                        author:
+                          id: 0
+                          name: string
+                          avatar: string
+                        job_bindings:
+                          - {}
+                        executive_recruiter:
+                          id: 0
+                          name: string
+                          avatar: string
+                        jobs_users:
+                          - id: 0
+                            job_id: 0
+                            role:
+                              id: 0
+                              company_id: 0
+                              name: string
+                              role_type: string
+                            user:
+                              id: 0
+                              name: string
+                              email: string
+                              avatar: string
+                        first_opened_at: string
+                        archived: true
+                        demand: 0
+                        state_id: string
+                        closed_at: string
+                        closure_date: string
+                        private: true
+                        direction_code: string
+                        job_type: string
+                        staffing_item_full_ext_id: string
+                        staffing_item_parent_full_ext_id: string
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Job'
+              examples:
+                Пример ответа:
+                  value:
+                    data:
+                      - id: 1911
+                        name: Начальник технического отдела
+                        description: |-
+                          <div>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                          <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                          </div>
+                        schedule_type: fullDay
+                        salary_from: 10000
+                        salary_to: 20000
+                        code: 12
+                        code_enable: true
+                        experience_type: noExperience
+                        employment_type: full
+                        currency_type: RUR
+                        key_skills:
+                          - стрессоустойчивый
+                        city: '1'
+                        created_at: '2020-07-17T10:38:55.904+03:00'
+                        updated_at: '2021-07-17T10:38:55.904+03:00'
+                        first_opened_at: '2020-07-17T10:38:55.904+03:00'
+                        archived: false
+                        demand: 1
+                        closed_at: '2021-07-17T10:38:55.904+03:00'
+                        closure_date: '2022-07-17T10:38:55.904+03:00'
+                        private: false
+                        direction_code: '1357'
+                        job_type: point
+                        staffing_item_full_ext_id: position_1234
+                        staffing_item_parent_full_ext_id: department_4321
+                        priority: highest
+                        state_id: opened
+                        company_department:
+                          archived: false
+                          id: 3121
+                          name: IT Department
+                        published: true
+                        publish_location: 'https://career.potok.io/open/jobs/1911'
+                        applicants_count:
+                          all: 3
+                          active: 2
+                        stages:
+                          - id: 1918
+                            name: Проверка СБ
+                            serial: 789
+                            active_applicants: 2
+                            declined_applicants: 1
+                            stage_type: security
+                        author:
+                          id: 11
+                          name: Иванов Иван Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                          phones:
+                            - '79996543221'
+                        job_bindings:
+                          - id: 657
+                            type: 'JobBinding::Career'
+                            url: 'https://career.potok.io/open/jobs/1911'
+                            info:
+                              name: Начальник технического отдела
+                              description: |-
+                                <div>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                                <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                                </div>
+                              schedule_type: fullDay
+                        executive_recruiter:
+                          id: 11
+                          name: Иванов Иван Иванович
+                          email: ivan@ivanov.com
+                          avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                          phones:
+                            - '79996543221'
+                        jobs_users:
+                          - id: 1234
+                            job_id: 1911
+                            role:
+                              id: 4321
+                              company_id: 99
+                              name: Суперадмин
+                              role_type: superadmin
+                              billing: true
+                            user:
+                              id: 11
+                              name: Иванов Иван Иванович
+                              email: ivan@ivanov.com
+                              avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                              phones:
+                                - '79996543221'
+          headers: {}
+        '401':
+          description: Отказ в доступе. Неверная авторизация или аутентификация
+      operationId: get-jobs-id-.json
+      description: |-
+        Получение данных вакансию по ее ID. Метод возвращает статические поля, а также все динамические поля, набор которых зависит от настроек формы вакансии. Описание приведено для стандартной формы, в случае ее изменения метод может возвращать другой набор параметров.
+
+        Если вакансия с указанным ID не найдена, Potok возвращает код 200 с телом `null`.
+      parameters: []
+    parameters:
+      - schema:
+          type: number
+          example: 16564
+        name: id
+        in: path
+        required: true
+        description: ID Вакансии
 components:
   schemas:
-    User:
-      title: User
-      type: object
+    author:
       description: ''
+      type: object
       x-examples:
-        Alice Smith:
-          id: 142
-          firstName: Alice
-          lastName: Smith
-          email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
-          emailVerified: true
-          signUpDate: '2019-08-24'
+        example-1:
+          id: 0
+          name: string
+          avatar: string
+      title: Создатель вакансии
       properties:
         id:
-          type: integer
-          description: Unique identifier for the given user.
-        firstName:
+          type: number
+          description: ID Создателя вакансии
+        name:
           type: string
-        lastName:
-          type: string
+          description: ФИО Создателя вакансии
         email:
           type: string
-          format: email
-        dateOfBirth:
+          description: Email создателя вакансии
+        avatar:
           type: string
-          format: date
-          example: '1997-10-31'
-        emailVerified:
-          type: boolean
-          description: Set to true if the user's email has been verified.
-        createDate:
-          type: string
-          format: date
-          description: The date that the user was created.
+          description: Ссылка на аватар создателя вакансии
+        phones:
+          type: array
+          description: |-
+            Массив всегда из одного элемента.
+            Номер телефона создателя вакансии строкой
+          items:
+            type: string
       required:
         - id
-        - firstName
-        - lastName
+        - name
         - email
-        - emailVerified
-      x-internal: true
+        - avatar
+    stages:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          name: string
+          serial: 0
+          active_applicants: 0
+          declined_applicants: 0
+      title: Этапы воронки
+      properties:
+        id:
+          type: number
+          description: ID Этапа вакансии
+        name:
+          type: string
+          description: Название этапа вакансии
+        serial:
+          type: number
+          description: Порядковый номер этапа в воронке
+        active_applicants:
+          type: number
+          description: Количество активных кандидатов на этапе
+        declined_applicants:
+          type: number
+          description: Количество отклоненных кандидатов на этапе
+        stage_type:
+          type: string
+          description: ID Типа этапа
+      required:
+        - id
+        - name
+        - serial
+        - active_applicants
+        - declined_applicants
+        - stage_type
+    Job:
+      type: array
+      description: ''
+      uniqueItems: true
+      x-examples:
+        example-1:
+          - id: 1911
+            name: Начальник технического отдела
+            description: string
+            company_department:
+              archived: false
+              id: 52
+              name: IT Department
+            schedule_type: fullDay
+            salary_from: 10000
+            salary_to: 20000
+            code: '1599'
+            code_enable: false
+            experience_type: noExperience
+            employment_type: full
+            currency_type: RUR
+            key_skills:
+              - умелый
+            city: '1'
+            published: true
+            publish_location: string
+            applicants_count:
+              all: 4
+              active: 2
+            created_at: '2020-07-17T10:38:55.904+03:00'
+            updated_at: '2022-08-22T08:50:21.638+03:00'
+            stages:
+              - id: 1432
+                name: Проверка СБ
+                serial: 456
+                active_applicants: 1
+                declined_applicants: 1
+                stage_type: security
+            author:
+              id: 148846
+              name: Иван Иванов Иванович
+              email: ivan@ivanov.com
+              avatar: 'https://avatarka.zdes/ava.jpg'
+              phones:
+                - '87771110000'
+            job_bindings:
+              - id: 8899
+                type: 'JobBinding::Career'
+                url: 'https://ivanov@mysupersite.com/open/jobs/223234'
+                info:
+                  name: Повар
+                  description: string
+                  schedule_type: fullDay
+            executive_recruiter:
+              id: 412412
+              name: Иванов Иван Иванович
+              email: ivanov@ivan.tut
+              avatar: 'https://avatarka.zdes/ava.jpg'
+              phones:
+                - '18888324'
+            jobs_users:
+              - id: 1231
+                job_id: 4322
+                role:
+                  id: 13
+                  company_id: 99
+                  name: Суперадмин
+                  role_type: superadmin
+                  billing: true
+                user:
+                  id: 14
+                  name: Alabai
+                  email: bumaga@tochka.cot
+                  avatar: 'https://avatarka.zdes/ava.jpg'
+                  phones:
+                    - '123123124'
+            first_opened_at: '2020-07-17T10:38:55.900+03:00'
+            archived: true
+            demand: 5
+            state_id: opened
+            closed_at: string
+            closure_date: '2021-09-30T00:00:00.000+03:00'
+            private: true
+            direction_code: point
+            job_type: point
+            staffing_item_full_ext_id: position_12423
+            staffing_item_parent_full_ext_id: department_33448
+      examples:
+        - - id: 1911
+            name: Начальник технического отдела
+            description: |-
+              <div>
+              <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+              <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+              <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+              </div>
+            schedule_type: fullDay
+            salary_from: 10000
+            salary_to: 20000
+            code: 12
+            code_enable: true
+            experience_type: noExperience
+            employment_type: full
+            currency_type: RUR
+            key_skills:
+              - стрессоустойчивый
+            city: '1'
+            created_at: '2020-07-17T10:38:55.904+03:00'
+            updated_at: '2021-07-17T10:38:55.904+03:00'
+            first_opened_at: '2020-07-17T10:38:55.904+03:00'
+            archived: false
+            demand: 1
+            closed_at: '2021-07-17T10:38:55.904+03:00'
+            closure_date: '2022-07-17T10:38:55.904+03:00'
+            private: false
+            direction_code: '1357'
+            job_type: point
+            staffing_item_full_ext_id: position_1234
+            staffing_item_parent_full_ext_id: department_4321
+            priority: highest
+            state_id: opened
+            company_department:
+              archived: false
+              id: 3121
+              name: IT Department
+            published: true
+            publish_location: 'https://career.potok.io/open/jobs/1911'
+            applicants_count:
+              all: 3
+              active: 2
+            stages:
+              - id: 1918
+                name: Проверка СБ
+                serial: 789
+                active_applicants: 2
+                declined_applicants: 1
+                stage_type: security
+            author:
+              id: 11
+              name: Иванов Иван Иванович
+              email: ivan@ivanov.com
+              avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+              phones:
+                - '79996543221'
+            job_bindings:
+              - id: 657
+                type: 'JobBinding::Career'
+                url: 'https://career.potok.io/open/jobs/1911'
+                info:
+                  name: Начальник технического отдела
+                  description: |-
+                    <div>
+                    <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Требования:</p>
+                    <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Обязанности:</p>
+                    <p style="white-space:pre-wrap;line-height:1;margin:6px 0;">Условия работы:</p>
+                    </div>
+                  schedule_type: fullDay
+            executive_recruiter:
+              id: 11
+              name: Иванов Иван Иванович
+              email: ivan@ivanov.com
+              avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+              phones:
+                - '79996543221'
+            jobs_users:
+              - id: 1234
+                job_id: 1911
+                role:
+                  id: 4321
+                  company_id: 99
+                  name: Суперадмин
+                  role_type: superadmin
+                  billing: true
+                user:
+                  id: 11
+                  name: Иванов Иван Иванович
+                  email: ivan@ivanov.com
+                  avatar: 'https://app.potok.io/uploads/user/avatar/1/photo.png'
+                  phones:
+                    - '79996543221'
+      title: ''
+      items:
+        type: object
+        properties:
+          id:
+            type: number
+            description: ID Вакансии
+          name:
+            type: string
+            description: Название вакансии
+          description:
+            type: string
+            description: Описание вакансии
+          schedule_type:
+            type: string
+            description: ID Графика работы (словарь - `schedule_type`)
+          salary_from:
+            type: number
+            description: Ожидаемая ЗП от
+          salary_to:
+            type: number
+            description: Ожидаемая ЗП до
+          code:
+            type: number
+            description: Код вакансии
+          code_enable:
+            type: boolean
+            description: |-
+              Признак активности кода
+
+              `true` - код вакансии включен
+
+              `false` - код вакансии выключен
+          experience_type:
+            type: string
+            description: ID Опыта работы (словарь - `experience_type`)
+          employment_type:
+            type: string
+            description: ID Занятости (словарь - `employment_type`)
+          currency_type:
+            type: string
+            description: ID Валюты (словарь - `currency_type`)
+          key_skills:
+            type: array
+            description: Массив ключевых навыков
+            items:
+              type: string
+          city:
+            type: string
+            description: ID Города вакансии (словарь - `cities`)
+          created_at:
+            type: string
+            description: 'Время создания вакансии (в формате [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) с точностью до миллисекунд `YYYY-MM-DDThh:mm:ss.mmm±hh:mm`)'
+          updated_at:
+            type: string
+            description: 'Время обновления вакансии (в формате [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) с точностью до миллисекунд `YYYY-MM-DDThh:mm:ss.mmm±hh:mm`)'
+          first_opened_at:
+            type: string
+            description: 'Фактическое время открытия вакансии (в формате [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) с точностью до миллисекунд `YYYY-MM-DDThh:mm:ss.mmm±hh:mm`)'
+          archived:
+            type: boolean
+            description: |-
+              Признак архивности вакансии
+
+              `true` - вакансия находится в архиве
+
+              `false` - вакансия не находится в архиве
+          demand:
+            type: number
+            description: Количество вакантных мест
+          closed_at:
+            type: string
+            description: 'Фактическое время закрытия вакансии (в формате [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) с точностью до миллисекунд `YYYY-MM-DDThh:mm:ss.mmm±hh:mm`)'
+          closure_date:
+            type: string
+            description: 'Ожидаемое время закрытия вакансии (в формате [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) с точностью до миллисекунд `YYYY-MM-DDThh:mm:ss.mmm±hh:mm`)'
+          private:
+            type: boolean
+            description: |-
+              Признак конфиденциальности вакансии
+
+              `true` - конфиденциальная вакансия
+
+              `false` - неконфиденциальная вакансия
+          direction_code:
+            type: string
+            description: |-
+              Код направления подбора (в компании могут быть добавлены дополнительные направления)
+
+              `point` - точечный подбор
+          job_type:
+            type: string
+            description: |-
+              ID воронки подбора (в компании могут быть добавлены дополнительные воронки)
+
+              `point` - точечный подбор
+          staffing_item_full_ext_id:
+            type: string
+            description: ID Должности из штатной структуры
+          staffing_item_parent_full_ext_id:
+            type: string
+            description: ID Подразделения из штатной структуры
+          priority:
+            type: string
+            description: |-
+              Приоритет вакансии
+
+              `low` - низкий
+
+              `medium` - средний
+
+              `high` - высокий
+
+              `highest` - наивысший
+          state_id:
+            type: string
+            description: |-
+              ID Статуса вакансии
+
+              `opened` - вакансия открыта
+
+              `paused` - вакансия приостановлена
+
+              `closed` - вакансия закрыта
+
+              `canceld` - вакансия отменена
+          company_department:
+            type: object
+            description: Отдел
+            properties:
+              archived:
+                type: boolean
+                description: |-
+                  Признак архивности отдела
+
+                  `true` - находится в архиве
+
+                  `false` - не находится в архиве
+              id:
+                type: number
+                description: ID Отдела
+              name:
+                type: string
+                description: Название отдела
+          published:
+            type: boolean
+            description: |-
+              Признак опубликованности вакансии на карьерном сайте
+
+              `true` - вакансия опубликована
+
+              `false` - ваканся неопубликована
+          publish_location:
+            type: string
+            description: URL Вакансии на карьерной странице. Может быть `null`
+          applicants_count:
+            type: object
+            description: Количество кандидатов на вакансии
+            required:
+              - all
+              - active
+            properties:
+              all:
+                type: number
+                description: 'Все кандидаты, включая отклоненных'
+              active:
+                type: number
+                description: Активные кандидаты
+          stages:
+            type: array
+            uniqueItems: true
+            description: Массив этапов на вакансии
+            items:
+              $ref: '#/components/schemas/stages'
+          author:
+            $ref: '#/components/schemas/author'
+          job_bindings:
+            type: array
+            uniqueItems: true
+            description: Массив активных публикаций на работных сайтах
+            items:
+              type: object
+              properties:
+                id:
+                  type: number
+                  description: ID Публикации
+                type:
+                  type: string
+                  description: |-
+                    Тип публикации: 
+                    `JobBinding::Remote`,
+                    `JobBinding::CompanyPartner`,
+                    `JobBinding::Vcv`,
+                    `JobBinding::Superjob`,
+                    `JobBinding::Headhunter`,
+                    `JobBinding::Avito`,
+                    `JobBinding::Icanchoose`,
+                    `JobBinding::Career`
+                url:
+                  type: string
+                  description: URL Публикации
+                info:
+                  type: object
+                  description: Информация о публикации
+                  properties:
+                    name:
+                      type: string
+                      description: Название публикации
+                    description:
+                      type: string
+                      description: Описание публикации
+                    schedule_type:
+                      type: string
+                      description: ID Графика работы (словарь - `schedule_type`)
+          executive_recruiter:
+            type: object
+            description: Ответственный рекрутер
+            properties:
+              id:
+                type: number
+                description: ID Ответственного рекрутера
+              name:
+                type: string
+                description: ФИО Ответственного рекрутера
+              email:
+                type: string
+                description: Email ответственного рекрутера
+              avatar:
+                type: string
+                description: Ссылка на аватар ответственного рекрутера
+              phones:
+                type: array
+                description: |-
+                  Массив всегда из одного элемента.
+                  Номер телефона ответственного рекрутера строкой
+                items:
+                  type: string
+          jobs_users:
+            type: array
+            uniqueItems: true
+            description: Массив пользователей команды по вакансии
+            items:
+              type: object
+              properties:
+                id:
+                  type: number
+                  description: ID связки пользователя с вакансией
+                job_id:
+                  type: number
+                  description: ID Вакансии
+                role:
+                  type: object
+                  description: Роль пользователя
+                  required:
+                    - id
+                    - company_id
+                    - name
+                    - role_type
+                    - billing
+                  properties:
+                    id:
+                      type: number
+                      description: ID Роли
+                    company_id:
+                      type: number
+                      description: ID Компании
+                    name:
+                      type: string
+                      description: Название роли
+                    role_type:
+                      type: string
+                      description: 'Тип роли, например `manager`'
+                    billing:
+                      type: boolean
+                      description: |-
+                        Признак платной роли
+
+                        `true` - платная роль
+
+                        `false` - бесплатная роль
+                user:
+                  type: object
+                  description: Пользователь в команде по вакансии
+                  required:
+                    - id
+                    - name
+                    - email
+                    - avatar
+                  properties:
+                    id:
+                      type: number
+                      description: ID Пользователя
+                    name:
+                      type: string
+                      description: ФИО Пользователя
+                    email:
+                      type: string
+                      description: Email пользователя
+                    avatar:
+                      type: string
+                      description: Ссылка на аватар пользователя
+                    phones:
+                      type: array
+                      description: |-
+                        Массив всегда из одного элемента.
+                        Номер телефона пользователя строкой
+                      items:
+                        type: string
+              required:
+                - id
+                - job_id
+                - role
+                - user
+        required:
+          - id
+          - name
+          - schedule_type
+          - salary_from
+          - salary_to
+          - code
+          - code_enable
+          - experience_type
+          - employment_type
+          - currency_type
+          - city
+          - created_at
+          - updated_at
+          - first_opened_at
+          - archived
+          - demand
+          - closed_at
+          - closure_date
+          - private
+          - direction_code
+          - job_type
+          - staffing_item_full_ext_id
+          - staffing_item_parent_full_ext_id
+          - priority
+          - state_id
+          - company_department
+          - published
+          - publish_location
+          - applicants_count
+          - stages
+          - author
+          - executive_recruiter
+          - jobs_users
   securitySchemes:
-    Токен в заголовке:
+    headerToken:
       name: Authorization
       type: apiKey
       in: header
-      description: ''
-    Токен в параметре запроса:
-      name: token
+      description: |-
+        Токен компании, создается в Поток в разделе `Генерация токенов`. Может передаваться одним из двух способов: в заголовке (Header).                             
+
+        Пример: Authorization: “Bearer `token`”
+    queryToken:
+      name: Token
       type: apiKey
       in: query
-      description: ''
-  requestBodies:
-    test:
+      description: |-
+        Или в query-параметре (Query Params).
+
+        Пример: GET /api/v3/applicants?token=`token`
+  examples: {}
+  requestBodies: {}
+  responses:
+    '400':
+      description: Ошибка параметров запроса
       content:
         application/json:
           schema:
             type: object
+            x-examples:
+              example-1:
+                status: 400
+                error: Bad Request
+            properties:
+              status:
+                type: number
+                description: HTTP-код ответа
+              error:
+                type: string
+                description: Текст ошибки
+          examples:
+            Пример ответа:
+              value:
+                status: 400
+                error: Bad Request
+    '422':
+      description: 'Ошибки при заполнении полей: не заполнено поле, неверный формат и прочие ошибки валидации на разных этапах с указанием полей, в которых произошла ошибка'
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            x-examples:
+              example-1:
+                errors:
+                  code:
+                    - Код не может быть задан вручную
+                  company_department_id:
+                    - Не найден отдел с таким id
+            properties:
+              errors:
+                type: object
+            required:
+              - errors
+          examples:
+            Пример ответа:
+              value:
+                errors:
+                  code:
+                    - Код не может быть задан вручную
+                  company_department_id:
+                    - Не найден отдел с таким id
 security:
-  - Токен в заголовке: []
-  - Токен в параметре запроса: []
+  - headerToken: []
+  - queryToken: []
 tags:
-  - name: Потребности
-  - name: test
+  - name: вакансии
